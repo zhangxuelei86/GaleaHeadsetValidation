@@ -1,7 +1,7 @@
 # Some standard pythonic imports
-import os, numpy as np, pandas as pd
-from collections import OrderedDict
 import warnings
+
+import numpy as np
 
 warnings.filterwarnings('ignore')
 from matplotlib import pyplot as plt
@@ -11,8 +11,7 @@ from mne import Epochs, find_events
 from mne.time_frequency import psd_welch, tfr_morlet
 
 # EEG-Notebooks functions
-from eegnb.analysis.utils import load_data, plot_conditions
-from eegnb.datasets import fetch_dataset
+from eegnb.analysis.utils import load_data
 
 # sphinx_gallery_thumbnail_number = 3
 
