@@ -9,8 +9,8 @@ from mne.time_frequency import psd_welch
 # EEG-Notebooks functions
 
 # user parameters ######################################################
-data_path = 'C:/Dropbox/OpenBCI/Data/06-04-2021 6-34 PM Data.csv'
-headset = 'Cap'
+data_path = 'C:/Dropbox/OpenBCI/Data/06-05-2021 5-13 PM Data.csv'
+headset = 'Galea'
 # end of user parameters ######################################################
 
 if headset == 'Galea':
@@ -23,11 +23,10 @@ else:
     eeg_slice = np.s_[:, 1:6]  # first dimension is time, taking 6 eeg channels
     stim_slice = np.s_[:, -2]
     sampling_freq = 250  # in Hertz
-    ch_names = ['O1', 'O2', 'P3', 'Pz', 'P4', 'stim']  # electrode cap does not have oz
+    ch_names = ['O1', 'O2', 'P3', 'Pz', 'P4']  # electrode cap does not have oz
     desired_chs = ['O1', 'O2', 'P3', 'Pz', 'P4']
 
-eeg_n_ch = len(ch_names)
-data_df = pd.read_csv(data_path, header=None)
+data_df = pd.read_csv(data_path)
 
 # grab the eeg data channels
 eeg_array = data_df.iloc[eeg_slice].values
@@ -37,6 +36,7 @@ stim_array = np.nan_to_num(stim_array, nan=0)
 eeg_stim_array = np.concatenate([eeg_array, stim_array], axis=-1)
 
 montage = make_standard_montage('standard_1005')
+eeg_n_ch = len(ch_names)
 ch_types = ['eeg'] * eeg_n_ch + ['stim']
 ch_names += ['EventMarker']
 info = mne.create_info(ch_names, sfreq=sampling_freq, ch_types=ch_types)
@@ -53,8 +53,8 @@ plt.show()
 events = mne.find_events(raw)
 event_id = {'30 Hz': 30, '20 Hz': 20}
 epochs = Epochs(raw, events=events, event_id=event_id,
-                tmin=-0.5, tmax=4, baseline=None, preload=True,
-                verbose=False, picks='all')
+                tmin=-0.5, tmax=10, baseline=None, preload=True,
+                verbose=False, picks='eeg')
 print('sample drop %: ', (1 - len(epochs.events) / len(events)) * 100)
 
 
