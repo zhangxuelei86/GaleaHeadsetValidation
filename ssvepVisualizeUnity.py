@@ -9,8 +9,13 @@ from mne.time_frequency import psd_welch
 # EEG-Notebooks functions
 
 # user parameters ######################################################
-data_path = 'C:/Dropbox/OpenBCI/Data/06-05-2021 5-13 PM Data.csv'
+from utils import get_n_distinct_colors
+
+data_path = 'C:/Dropbox/OpenBCI/Data/06-11-2021 7-04 PM Data.csv'
 headset = 'Galea'
+# event_id = {'30 Hz': 30, '20 Hz': 20}
+event_id = {'15 Hz': 15, '12 Hz': 12}
+
 # end of user parameters ######################################################
 
 if headset == 'Galea':
@@ -51,111 +56,24 @@ plt.show()
 
 # plot events
 events = mne.find_events(raw)
-event_id = {'30 Hz': 30, '20 Hz': 20}
 epochs = Epochs(raw, events=events, event_id=event_id,
-                tmin=-0.5, tmax=10, baseline=None, preload=True,
+                tmin=-0.5, tmax=4, baseline=None, preload=True,
                 verbose=False, picks='eeg')
 print('sample drop %: ', (1 - len(epochs.events) / len(events)) * 100)
 
+for i, chan_name in enumerate(desired_chs):
+    fig = plt.figure()
+    ax = fig.add_subplot()
+    ax.set_prop_cycle(color=get_n_distinct_colors(len(desired_chs)))
+    for key, value in event_id.items():
+        psd1, freq1 = psd_welch(epochs[key], n_fft=1028, n_per_seg=256 * 3, picks=desired_chs)
+        psd1 = 10 * np.log10(psd1)
+        psd1_mean = psd1.mean(0)
+        psd1_std = psd1.mean(0)
 
-f, axs = plt.subplots(2, 1, figsize=(10, 10))
-psd1, freq1 = psd_welch(epochs['30 Hz'], n_fft=1028, n_per_seg=256 * 3, picks=desired_chs)
-psd2, freq2 = psd_welch(epochs['20 Hz'], n_fft=1028, n_per_seg=256 * 3, picks=desired_chs)
-psd1 = 10 * np.log10(psd1)
-psd2 = 10 * np.log10(psd2)
-
-psd1_mean = psd1.mean(0)
-psd1_std = psd1.mean(0)
-
-psd2_mean = psd2.mean(0)
-psd2_std = psd2.mean(0)
-
-axs[0].plot(freq1, psd1_mean[[1, 4], :].mean(0), color='b', label='30 Hz')
-axs[0].plot(freq2, psd2_mean[[1, 4], :].mean(0), color='r', label='20 Hz')
-
-axs[1].plot(freq1, psd1_mean[4, :], color='b', label='30 Hz')
-axs[1].plot(freq2, psd2_mean[4, :], color='r', label='20 Hz')
-
-axs[0].set_title('Headset {0}: Oz and Pz'.format(headset))
-axs[1].set_title('Headset {0}: P4'.format(headset))
-
-axs[0].set_ylabel('Power Spectral Density (dB)')
-axs[1].set_ylabel('Power Spectral Density (dB)')
-
-axs[0].set_xlim((2, 50))
-axs[1].set_xlim((2, 50))
-
-axs[1].set_xlabel('Frequency (Hz)')
-
-axs[0].legend()
-axs[1].legend()
-
-plt.show()
-
-# f_freq = 30
-# title = note + 'Flickering Frequency: {0} Hz'.format(f_freq)
-# epochs_params = dict(events=events, event_id=[f_freq], tmin=-1.5, tmax=10, baseline=(-1.5, -0.5))
-# evoked = mne.Epochs(raw=raw, **epochs_params, preload=True)
-# # evoked.filter(l_freq=f_freq-5, h_freq=f_freq+5)
-# evoked.plot_psd(fmin=5, fmax=40, picks='eeg', tmin=0, tmax=10, show=False)
-# plt.title(title)
-# plt.show()
-# a = evoked.get_data()[0, :5, :]
-# f, t, Sxx = signal.spectrogram(a[ch_names.index('O1')], sampling_freq)
-# plt.pcolormesh(t, f, Sxx, shading='gouraud')
-# plt.ylabel('Frequency [Hz]')
-# plt.xlabel('Time [sec]')
-# plt.title(title)
-# plt.show()
-#
-# f_freq = 20
-# title = note + 'Flickering Frequency: {0} Hz'.format(f_freq)
-# epochs_params = dict(events=events, event_id=[f_freq], tmin=-1.5, tmax=10, baseline=(-1.5, -0.5))
-# evoked = mne.Epochs(raw=raw, **epochs_params, preload=True)
-# # evoked.filter(l_freq=f_freq-5, h_freq=f_freq+5)
-# evoked.plot_psd(fmin=5, fmax=40, picks='eeg', tmin=0, tmax=10, show=False)
-# plt.title(title)
-# plt.show()
-# a = evoked.get_data()[0, :5, :]
-# f, t, Sxx = signal.spectrogram(a[ch_names.index('O1')], sampling_freq)
-# plt.pcolormesh(t, f, Sxx, shading='gouraud')
-# plt.ylabel('Frequency [Hz]')
-# plt.xlabel('Time [sec]')
-# plt.title(title)
-# plt.show()
-
-# a = evoked.get_data()
-# a = a[0]
-# [plt.plot(a[i, :]) for i in range(len(a)-1)]
-# plt.plot(a[0, :][:500])
-# plt.show()
-
-# f_freq = 20
-# title = note + 'Flickering Frequency: {0} Hz'.format(f_freq)
-# epochs_params = dict(events=events, event_id=[f_freq], tmin=-1.5, tmax=10, baseline=(-1, 0))
-# evoked = mne.Epochs(raw=raw, **epochs_params)
-# evoked.plot_psd(fmin=5, fmax=40, picks='eeg', tmin=0, tmax=10, show=False)
-# plt.title(title)
-# plt.show()
-# a = evoked.get_data()[0, :5, :]
-# f, t, Sxx = signal.spectrogram(a[ch_names.index('O1')], sampling_freq)
-# plt.pcolormesh(t, f, Sxx, shading='gouraud')
-# plt.ylabel('Frequency [Hz]')
-# plt.xlabel('Time [sec]')
-# plt.title(title)
-# plt.show()
-#
-# f_freq = 30
-# title = note + 'Flickering Frequency: {0} Hz'.format(f_freq)
-# epochs_params = dict(events=events, event_id=[f_freq], tmin=-1.5, tmax=10, baseline=(-1, 0))
-# evoked = mne.Epochs(raw=raw, **epochs_params)
-# evoked.plot_psd(fmin=5, fmax=40, picks='eeg', tmin=0, tmax=10, show=False)
-# plt.title(title)
-# plt.show()
-# a = evoked.get_data()[0, :5, :]
-# f, t, Sxx = signal.spectrogram(a[ch_names.index('O1')], sampling_freq)
-# plt.pcolormesh(t, f, Sxx, shading='gouraud')
-# plt.ylabel('Frequency [Hz]')
-# plt.xlabel('Time [sec]')
-# plt.title(title)
-# plt.show()
+        ax.plot(freq1, psd1_mean[[i,], :].mean(0), label=key)
+        ax.set_title('Headset {0}: {1}'.format(headset, chan_name))
+        ax.set_ylabel('Power Spectral Density (dB)')
+        ax.set_xlim((2, 50))
+        ax.legend()
+    plt.show()
