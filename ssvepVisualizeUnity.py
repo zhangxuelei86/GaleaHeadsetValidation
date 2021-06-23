@@ -11,7 +11,10 @@ from mne.time_frequency import psd_welch
 # user parameters ######################################################
 from utils import get_n_distinct_colors
 
-data_path = 'C:/Dropbox/OpenBCI/Data/06-11-2021 7-04 PM Data.csv'
+notes = 'Galea unit 35 6/22'
+num_participant = 1
+data_path_list = ['C:/Dropbox/OpenBCI/Data/06-22-2021 12-31 PM Data.csv',
+                   'C:/Dropbox/OpenBCI/Data/06-22-2021 1-01 PM Data.csv']
 headset = 'Galea'
 # event_id = {'30 Hz': 30, '20 Hz': 20}
 event_id = {'15 Hz': 15, '12 Hz': 12}
@@ -31,21 +34,26 @@ else:
     ch_names = ['O1', 'O2', 'P3', 'Pz', 'P4']  # electrode cap does not have oz
     desired_chs = ['O1', 'O2', 'P3', 'Pz', 'P4']
 
-data_df = pd.read_csv(data_path)
 
 # grab the eeg data channels
-eeg_array = data_df.iloc[eeg_slice].values
-eeg_array = np.nan_to_num(eeg_array, nan=0)
-stim_array = np.expand_dims(data_df.iloc[stim_slice].values, axis=-1)
-stim_array = np.nan_to_num(stim_array, nan=0)
-eeg_stim_array = np.concatenate([eeg_array, stim_array], axis=-1)
+raw_list = []
 
+for data_path in data_path_list:
+    data_df = pd.read_csv(data_path)
+
+    eeg_array = data_df.iloc[eeg_slice].values
+    eeg_array = np.nan_to_num(eeg_array, nan=0)
+    stim_array = np.expand_dims(data_df.iloc[stim_slice].values, axis=-1)
+    stim_array = np.nan_to_num(stim_array, nan=0)
+    eeg_stim_array = np.concatenate([eeg_array, stim_array], axis=-1)
+
+    eeg_n_ch = len(ch_names)
+    ch_types = ['eeg'] * eeg_n_ch + ['stim']
+    info = mne.create_info(ch_names + ['EventMarker'], sfreq=sampling_freq, ch_types=ch_types)
+    raw_list.append(mne.io.RawArray(eeg_stim_array.T, info))
+
+raw = mne.concatenate_raws(raw_list)
 montage = make_standard_montage('standard_1005')
-eeg_n_ch = len(ch_names)
-ch_types = ['eeg'] * eeg_n_ch + ['stim']
-ch_names += ['EventMarker']
-info = mne.create_info(ch_names, sfreq=sampling_freq, ch_types=ch_types)
-raw = mne.io.RawArray(eeg_stim_array.T, info)
 raw.set_montage(montage)
 # raw = raw.filter(l_freq=2, h_freq=50)
 
@@ -66,14 +74,15 @@ for i, chan_name in enumerate(desired_chs):
     ax = fig.add_subplot()
     ax.set_prop_cycle(color=get_n_distinct_colors(len(desired_chs)))
     for key, value in event_id.items():
-        psd1, freq1 = psd_welch(epochs[key], n_fft=1028, n_per_seg=256 * 3, picks=desired_chs)
-        psd1 = 10 * np.log10(psd1)
-        psd1_mean = psd1.mean(0)
-        psd1_std = psd1.mean(0)
+        psd, freq = psd_welch(epochs[key], n_fft=1028, n_per_seg=256 * 3, picks=desired_chs)
+        psd = 10 * np.log10(psd)
+        psd_mean = psd.mean(0)
+        psd_std = psd.mean(0)
 
-        ax.plot(freq1, psd1_mean[[i,], :].mean(0), label=key)
+        ax.plot(freq, psd_mean[[i, ], :].mean(0), label=key)
         ax.set_title('Headset {0}: {1}'.format(headset, chan_name))
         ax.set_ylabel('Power Spectral Density (dB)')
         ax.set_xlim((2, 50))
         ax.legend()
+    ax.set_title('{0} {1} #trial={2}, #sub={3}'.format(chan_name, notes, len(epochs[list(event_id.keys())]), num_participant))
     plt.show()
