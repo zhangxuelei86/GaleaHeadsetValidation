@@ -11,10 +11,18 @@ from mne.time_frequency import psd_welch
 # user parameters ######################################################
 from utils import get_n_distinct_colors
 
-notes = 'Galea unit 35 6/22'
-num_participant = 1
-data_path_list = ['C:/Dropbox/OpenBCI/Data/06-22-2021 12-31 PM Data.csv',
-                   'C:/Dropbox/OpenBCI/Data/06-22-2021 1-01 PM Data.csv']
+# notes = 'Galea unit 35 6/25'
+notes = 'Galea unit 37 6/25'
+
+# participants = '[5]'
+participants = '[1]'
+
+data_path_list = [
+    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 11-13 AM Data.csv',
+    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 12-43 PM Data.csv',
+    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 1-24 PM Data.csv'
+    'C:/Dropbox/OpenBCI/Data/06-25-2021 4-35 PM Data.csv'
+]
 headset = 'Galea'
 # event_id = {'30 Hz': 30, '20 Hz': 20}
 event_id = {'15 Hz': 15, '12 Hz': 12}
@@ -26,7 +34,7 @@ if headset == 'Galea':
     stim_slice = np.s_[:, -2]
     sampling_freq = 250  # in Hertz
     ch_names = ['Fp1', 'Fp2', 'Fz', 'Cz', 'Pz', 'Oz', 'P3', 'P4', 'O1', 'O2']
-    desired_chs = ['O1', 'Oz', 'O2', 'P3', 'Pz', 'P4']
+    desired_chs = ['P3', 'Pz', 'P4', 'O1', 'Oz', 'O2']
 else:
     eeg_slice = np.s_[:, 1:6]  # first dimension is time, taking 6 eeg channels
     stim_slice = np.s_[:, -2]
@@ -84,5 +92,5 @@ for i, chan_name in enumerate(desired_chs):
         ax.set_ylabel('Power Spectral Density (dB)')
         ax.set_xlim((2, 50))
         ax.legend()
-    ax.set_title('{0} {1} #trial={2}, #sub={3}'.format(chan_name, notes, len(epochs[list(event_id.keys())]), num_participant))
+    ax.set_title('Ch {0} {1} #trial={2}, sbj={3}'.format(chan_name, notes, len(epochs[list(event_id.keys())]), participants))
     plt.show()
