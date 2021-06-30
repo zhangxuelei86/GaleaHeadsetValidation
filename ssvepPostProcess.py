@@ -20,10 +20,11 @@ participants = '[1]'
 data_path_list = [
     # 'C:/Dropbox/OpenBCI/Data/06-25-2021 11-13 AM Data.csv',
     # 'C:/Dropbox/OpenBCI/Data/06-25-2021 12-43 PM Data.csv',
-    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 1-24 PM Data.csv'
-    'C:/Dropbox/OpenBCI/Data/06-25-2021 4-35 PM Data.csv'
+    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 1-24 PM Data.csv',
+    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 4-35 PM Data.csv',
+    'C:/Dropbox/OpenBCI/Data/06-29-2021 5-51 PM Data.csv',
 ]
-headset = 'Galea'
+headset = 'Cyton_Daisy'
 # event_id = {'30 Hz': 30, '20 Hz': 20}
 event_id = {'15 Hz': 15, '12 Hz': 12}
 
@@ -36,11 +37,15 @@ if headset == 'Galea':
     ch_names = ['Fp1', 'Fp2', 'Fz', 'Cz', 'Pz', 'Oz', 'P3', 'P4', 'O1', 'O2']
     desired_chs = ['P3', 'Pz', 'P4', 'O1', 'Oz', 'O2']
 else:
-    eeg_slice = np.s_[:, 1:6]  # first dimension is time, taking 6 eeg channels
+    # eeg_slice = np.s_[:, 1:6]  # first dimension is time, taking 6 eeg channels
+    eeg_slice = np.s_[:, [7, 12, 13]]  # first dimension is time, taking 6 eeg channels
     stim_slice = np.s_[:, -2]
     sampling_freq = 250  # in Hertz
-    ch_names = ['O1', 'O2', 'P3', 'Pz', 'P4']  # electrode cap does not have oz
-    desired_chs = ['O1', 'O2', 'P3', 'Pz', 'P4']
+    # ch_names = ['O1', 'O2', 'P3', 'Pz', 'P4']  # electrode cap does not have oz
+    # desired_chs = ['O1', 'O2', 'P3', 'Pz', 'P4']
+
+    ch_names = ['O2', 'Pz', 'O1']  # electrode cap does not have oz
+    desired_chs = ['O2', 'Pz', 'O1']
 
 
 # grab the eeg data channels

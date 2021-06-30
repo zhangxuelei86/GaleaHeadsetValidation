@@ -11,8 +11,8 @@ from mne import Epochs, find_events
 from mne.channels import make_standard_montage
 
 # options
-is_plotting = False
-is_exporting_samples = True
+is_plotting = True
+is_exporting_samples = False
 
 # user parameters ######################################################
 
@@ -29,19 +29,21 @@ notes = 'P300_062221-062521'
 
 participant = [1]
 data_path_list = [
-    'C:/Dropbox/OpenBCI/Data/06-22-2021 7-09 PM Data.csv',
-    'C:/Dropbox/OpenBCI/Data/06-22-2021 7-12 PM Data.csv',
-
-    'C:/Dropbox/OpenBCI/Data/06-24-2021 7-45 PM Data.csv',
-    'C:/Dropbox/OpenBCI/Data/06-24-2021 7-43 PM Data.csv',
-
-    'C:/Dropbox/OpenBCI/Data/06-25-2021 11-07 AM Data.csv',
-    'C:/Dropbox/OpenBCI/Data/06-25-2021 11-09 AM Data.csv',
-
-    'C:/Dropbox/OpenBCI/Data/06-25-2021 5-01 PM Data.csv',
-    'C:/Dropbox/OpenBCI/Data/06-25-2021 5-03 PM Data.csv',
+    # 'C:/Dropbox/OpenBCI/Data/06-22-2021 7-09 PM Data.csv',
+    # 'C:/Dropbox/OpenBCI/Data/06-22-2021 7-12 PM Data.csv',
+    #
+    # 'C:/Dropbox/OpenBCI/Data/06-24-2021 7-45 PM Data.csv',
+    # 'C:/Dropbox/OpenBCI/Data/06-24-2021 7-43 PM Data.csv',
+    #
+    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 11-07 AM Data.csv',
+    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 11-09 AM Data.csv',
+    #
+    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 5-01 PM Data.csv',
+    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 5-03 PM Data.csv',
+    'C:/Dropbox/OpenBCI/Data/06-29-2021 5-54 PM Data.csv',
+    'C:/Dropbox/OpenBCI/Data/06-29-2021 5-55 PM Data.csv',
 ]
-headset = 'Galea'
+headset = 'Cyton_Daisy'
 event_id = {'Target': 2, 'Distractor': 1}
 color_dict = {'Target': 'red', 'Distractor': 'blue'}
 
@@ -52,11 +54,15 @@ if headset == 'Galea':
     ch_names = ['Fp1', 'Fp2', 'Fz', 'Cz', 'Pz', 'Oz', 'P3', 'P4', 'O1', 'O2']
     desired_chs = ['Fz', 'Cz', 'Pz']
 else:
-    eeg_slice = np.s_[:, 1:6]  # first dimension is time, taking 6 eeg channels
+    # eeg_slice = np.s_[:, 1:6]  # first dimension is time, taking 6 eeg channels
+    eeg_slice = np.s_[:, [9, 19, 12]]  # first dimension is time, taking 6 eeg channels
     stim_slice = np.s_[:, -2]
     sampling_freq = 250  # in Hertz
-    ch_names = ['O1', 'O2', 'P3', 'Pz', 'P4']  # electrode cap does not have oz
-    desired_chs = ['O1', 'O2', 'P3', 'Pz', 'P4']
+    # ch_names = ['O1', 'O2', 'P3', 'Pz', 'P4']  # electrode cap does not have oz
+    # desired_chs = ['O1', 'O2', 'P3', 'Pz', 'P4']
+    ch_names = ['Fz', 'Cz', 'Pz']  # electrode cap does not have oz
+    desired_chs = ['Fz', 'Cz', 'Pz']
+
 
 raw_list = []
 
