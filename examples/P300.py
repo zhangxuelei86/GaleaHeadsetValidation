@@ -1,5 +1,5 @@
 # options
-from postprocess.p300PostProcess import post_process_p300
+from postprocess.P300PostProcess import post_process_p300
 
 is_plotting = True
 is_exporting_samples = False

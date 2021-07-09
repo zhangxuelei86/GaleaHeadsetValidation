@@ -1,4 +1,4 @@
-from postprocess.ssvepPostProcess import post_process_ssvep
+from postprocess.SSVEPPostProcess import post_process_ssvep
 
 notes = 'SSVEP_061121-062521'
 
