@@ -22,11 +22,16 @@ def post_process_ssvep(data_path_list, headset, participants=(0,), notes='', tmi
         ch_names = ['Fp1', 'Fp2', 'Fz', 'Cz', 'Pz', 'Oz', 'P3', 'P4', 'O1', 'O2']
         desired_chs = ['P3', 'Pz', 'P4', 'O1', 'Oz', 'O2']
     elif headset == 'ElectroCap':
-        eeg_slice = np.s_[:, 1:6]  # first dimension is time, taking 6 eeg channels
+        eeg_slice = np.s_[:, 1:17]  # first dimension is time, taking 6 eeg channels
         stim_slice = np.s_[:, -2]
         sampling_freq = 250  # in Hertz
-        ch_names = ['O1', 'O2', 'P3', 'Pz', 'P4']  # electrode cap does not have oz
-        desired_chs = ['O1', 'O2', 'P3', 'Pz', 'P4']
+        # ch_names = ['O1', 'O2', 'P3', 'Pz', 'P4']  # electrode cap does not have oz
+        # desired_chs = ['O1', 'O2', 'P3', 'Pz', 'P4']
+        ch_names = ['Fp1', 'Fp2', 'C3', 'C4', 'Fz', 'Pz', 'O1', 'O2', 'F7', 'F8', 'F3', 'F4', 'Cz', 'T6', 'P3',
+                    'P4']  # electrode cap does not have oz
+        desired_chs = ['Fp1', 'Fp2', 'C3', 'C4', 'Fz', 'Pz', 'O1', 'O2', 'F7', 'F8', 'F3', 'F4', 'Cz', 'T6', 'P3',
+                    'P4']
+        # desired_chs = ['O1', 'O2', 'P3', 'Pz', 'P4']
     elif headset == 'Ultracortex':
         eeg_slice = np.s_[:, 4:9]  # first dimension is time, taking 6 eeg channels
         stim_slice = np.s_[:, -2]

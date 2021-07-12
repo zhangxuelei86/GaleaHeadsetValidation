@@ -25,11 +25,14 @@ def post_process_p300(data_path_list, headset, participants=(0,), notes='', is_p
         sampling_freq = 250  # in Hertz
         ch_names = ['Fz', 'Cz', 'Pz']  # electrode cap does not have oz
         desired_chs = ['Fz', 'Cz', 'Pz']
-    elif headset == 'Electro Cap':
-        eeg_slice = np.s_[:, 1:6]  # first dimension is time, taking 6 eeg channels
+    elif headset == 'ElectroCap':
+        eeg_slice = np.s_[:, 1:17]  # first dimension is time, taking 6 eeg channels
         stim_slice = np.s_[:, -2]
         sampling_freq = 250  # in Hertz
-        ch_names = ['O1', 'O2', 'P3', 'Pz', 'P4']  # electrode cap does not have oz
+        # ch_names = ['O1', 'O2', 'P3', 'Pz', 'P4']  # electrode cap does not have oz
+        # desired_chs = ['O1', 'O2', 'P3', 'Pz', 'P4']
+        ch_names = ['Fp1', 'Fp2', 'C3', 'C4', 'Fz', 'Pz', 'O1', 'O2', 'F7', 'F8', 'F3', 'F4', 'Cz', 'T6', 'P3',
+                    'P4']  # electrode cap does not have oz
         desired_chs = ['Fz', 'Cz', 'Pz']
     else:
         raise Exception("Unrecognized headset name: {0}".format(headset))

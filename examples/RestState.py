@@ -1,31 +1,32 @@
+from postprocess.RestStatePostProcess import post_process_rest_state
 from postprocess.SSVEPPostProcess import post_process_ssvep
 
-notes = 'SSVEP_061121-062521'
+notes = 'RestState_070921-070921'
 
 participants = (0,)
 
-data_path_list = [
-    # 'C:/Dropbox/OpenBCI/Data/06-11-2021 2-27 PM Data.csv',  # Galea p#?
-    # 'C:/Dropbox/OpenBCI/Data/06-11-2021 2-44 PM Data.csv',  # Galea p#?
-
-    # 'C:/Dropbox/OpenBCI/Data/06-11-2021 5-02 PM Data.csv',  # Galea p#0
-    # 'C:/Dropbox/OpenBCI/Data/06-11-2021 5-13 PM Data.csv',  # Galea p#0
+data_path_dict = {
+    'Galea-ShortCurved': ['C:/Dropbox/OpenBCI/Data/07-09-2021 4-39 PM Data.csv',
+                          'C:/Dropbox/OpenBCI/Data/07-09-2021 4-59 PM Data.csv',
+                          ],
+    # 'Ultracortex': [
+    #     'C:/Dropbox/OpenBCI/Data/07-09-2021 5-14 PM Data.csv',
     #
-    # 'C:/Dropbox/OpenBCI/Data/06-11-2021 5-41 PM Data.csv',  # Galea p#0
-    # 'C:/Dropbox/OpenBCI/Data/06-11-2021 6-33 PM Data.csv',  # Galea p#0
-    #
-    # 'C:/Dropbox/OpenBCI/Data/06-11-2021 6-53 PM Data.csv',  # Galea p#0
-    # 'C:/Dropbox/OpenBCI/Data/06-11-2021 7-04 PM Data.csv',  # Galea p#0
+    # ]
 
-    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 11-13 AM Data.csv',  # Galea p#5
-    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 12-43 PM Data.csv',  # Galea p#5
+    # 'ElectroCap': [
+    #     'C:/Dropbox/OpenBCI/Data/07-09-2021 7-37 PM Data.csv',
+    #     'C:/Dropbox/OpenBCI/Data/07-09-2021 7-46 PM Data.csv',
+    # ]
+}
+tmin_focus = 0.2
+tmax_focus = 9.8
+tmin_rest = 0.2
+tmax_rest = 29.8
 
-    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 1-24 PM Data.csv',  # Galea p#5
-    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 4-35 PM Data.csv',  # Galea p#5
-    'C:/Dropbox/OpenBCI/Data/06-29-2021 5-51 PM Data.csv',  # Saline Cap p#3
-]
-headset = 'Ultracortex'
-tmin=0.2
-tmax=3.8
+timelocking_dict = {
+    'Focus': [1, 9.8],
+    'Rest': [1, 29.8]
+}
 
-post_process_ssvep(data_path_list, headset, participants, notes, tmin, tmax)
+post_process_rest_state(data_path_dict, timelocking_dict, participants, notes)
