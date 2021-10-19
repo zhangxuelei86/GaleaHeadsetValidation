@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from mne import Epochs
 from mne.channels import make_standard_montage
-from mne.time_frequency import psd_welch
+from mne.time_frequency import psd_welch, tfr_morlet
 
 # EEG-Notebooks functions
 
@@ -91,5 +91,15 @@ def post_process_ssvep(data_path_list, headset, participants=(0,), notes='', tmi
             ax.set_ylabel('Power Spectral Density (dB)')
             ax.set_xlim((2, 50))
             ax.legend()
+
         ax.set_title('Ch {0} {1} #trial={2}, sbj={3}'.format(chan_name, notes, len(epochs[list(event_id.keys())]), participants))
         plt.show()
+
+        for key, value in event_id.items():
+            frequencies = np.logspace(1, 1.75, 60)
+            tfr, itc = tfr_morlet(epochs[key], freqs=frequencies, picks='all',
+                                  n_cycles=15, return_itc=True)
+            tfr.plot(picks=[chan_name], baseline=(-0.5, -0.1), mode='logratio',
+                     title='{0} - {1} stim'.format(chan_name, key))
+            plt.tight_layout()
+            plt.show()

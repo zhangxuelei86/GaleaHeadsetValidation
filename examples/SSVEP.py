@@ -20,15 +20,15 @@ data_path_list = [
     # 'C:/Dropbox/OpenBCI/Data/06-25-2021 11-13 AM Data.csv',  # Galea p#5
     # 'C:/Dropbox/OpenBCI/Data/06-25-2021 12-43 PM Data.csv',  # Galea p#5
 
-    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 1-24 PM Data.csv',  # Galea p#5
-    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 4-35 PM Data.csv',  # Galea p#5
+    'C:/Dropbox/OpenBCI/Data/06-25-2021 1-24 PM Data.csv',  # Galea p#5
+    'C:/Dropbox/OpenBCI/Data/06-25-2021 4-35 PM Data.csv',  # Galea p#5
     # 'C:/Dropbox/OpenBCI/Data/06-29-2021 5-51 PM Data.csv',  # Saline Cap p#3
 
-    'C:/Dropbox/OpenBCI/Data/07-09-2021 8-20 PM Data.csv',  # ElectroCap p#6
-    'C:/Dropbox/OpenBCI/Data/07-09-2021 8-23 PM Data.csv',  # ElectroCap p#6
+    # 'C:/Dropbox/OpenBCI/Data/07-09-2021 8-20 PM Data.csv',  # ElectroCap p#6
+    # 'C:/Dropbox/OpenBCI/Data/07-09-2021 8-23 PM Data.csv',  # ElectroCap p#6
 ]
-headset = 'ElectroCap'
-tmin=0.2
-tmax=3.8
+headset = 'Galea'
+tmin=-0.5
+tmax=4.0
 
 post_process_ssvep(data_path_list, headset, participants, notes, tmin, tmax)

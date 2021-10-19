@@ -6,15 +6,10 @@ is_exporting_samples = False
 
 # user parameters ######################################################
 
-tmin = -0.2
-tmax = 0.5
+p300_tmin = -0.2
+p300_tmax = 0.5
 resample_f = 50
 
-# notes for plotting and explorting data
-# notes = 'Galea unit 35 6/22'
-# notes = 'Galea unit 37 6/24'
-# notes = 'Galea unit 35 6/25'
-# notes = 'Galea unit 39 6/25'
 notes = 'P300_062221-062521'
 
 participant = (0, 5)
@@ -40,4 +35,4 @@ data_path_list = [
 ]
 headset = 'ElectroCap'
 
-post_process_p300(data_path_list, headset, participant, notes, is_plotting, is_exporting_samples, tmin, tmax, resample_f)
+post_process_p300(data_path_list, headset, participant, notes, is_plotting, is_exporting_samples, p300_tmin, p300_tmax, resample_f)
