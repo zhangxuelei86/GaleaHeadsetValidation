@@ -34,10 +34,12 @@ data_path_list = [
     # 'C:/Dropbox/OpenBCI/Data/06-29-2021 5-54 PM Data.csv',  # Saline Cap p#3
     # 'C:/Dropbox/OpenBCI/Data/06-29-2021 5-55 PM Data.csv',  # Saline Cap p#3
 
-    'C:/Dropbox/OpenBCI/Data/07-09-2021 7-43 PM Data.csv',  # ElectroCap p#6
+    # 'C:/Dropbox/OpenBCI/Data/07-09-2021 7-43 PM Data.csv',  # ElectroCap p#6
     # 'C:/Dropbox/OpenBCI/Data/07-09-2021 8-16 PM Data.csv',  # ElectroCap p#6
     # 'C:/Dropbox/OpenBCI/Data/07-09-2021 8-18 PM Data.csv',  # ElectroCap p#6
+
+    'C:/Users/S-Vec/Downloads/Galea MVT Data/10-15-2021 2-09 PM Data.csv'
 ]
-headset = 'ElectroCap'
+headset = 'Galea'
 
 post_process_p300(data_path_list, headset, participant, notes, is_plotting, is_exporting_samples, tmin, tmax, resample_f)
