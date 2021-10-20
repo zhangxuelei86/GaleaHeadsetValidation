@@ -1,38 +1,39 @@
 # options
+import pandas as pd
+import os
+
 from postprocess.P300PostProcess import post_process_p300
+
+# user parameters ######################################################
+from postprocess.SSVEPPostProcess import post_process_ssvep
+
+notes = 'MVT Spring Partial 10/15/20'
+path_to_notes = 'C:/Dropbox/OpenBCI/Galea MVT Data/notes.csv'
+data_root = 'C:/Dropbox/OpenBCI/Galea MVT Data'
 
 is_plotting = True
 is_exporting_samples = False
 
-# user parameters ######################################################
-
+# experiment configurations ######################################################
 p300_tmin = -0.2
 p300_tmax = 0.5
+ssvep_tmin = -0.5
+ssvep_tmax = 4.0
+
 resample_f = 50
 
-notes = 'P300_062221-062521'
+df = pd.read_csv(path_to_notes)
 
-participant = (0, 5)
-data_path_list = [
-    # 'C:/Dropbox/OpenBCI/Data/06-22-2021 7-09 PM Data.csv',  # Galea p#0
-    # 'C:/Dropbox/OpenBCI/Data/06-22-2021 7-12 PM Data.csv',  # Galea p#0
-    #
-    # 'C:/Dropbox/OpenBCI/Data/06-24-2021 7-45 PM Data.csv',  # Galea p#5
-    # 'C:/Dropbox/OpenBCI/Data/06-24-2021 7-43 PM Data.csv',  # Galea p#5
-    #
-    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 11-07 AM Data.csv',  # Galea p#5
-    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 11-09 AM Data.csv',  # Galea p#5
+mvts = pd.unique(df['MVT'])  # find the MVT
 
-    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 5-01 PM Data.csv',  # Galea p#1
-    # 'C:/Dropbox/OpenBCI/Data/06-25-2021 5-03 PM Data.csv',  # Galea p#1
 
-    # 'C:/Dropbox/OpenBCI/Data/06-29-2021 5-54 PM Data.csv',  # Saline Cap p#3
-    # 'C:/Dropbox/OpenBCI/Data/06-29-2021 5-55 PM Data.csv',  # Saline Cap p#3
 
-    'C:/Dropbox/OpenBCI/Data/07-09-2021 7-43 PM Data.csv',  # ElectroCap p#6
-    'C:/Dropbox/OpenBCI/Data/07-09-2021 8-16 PM Data.csv',  # ElectroCap p#6
-    'C:/Dropbox/OpenBCI/Data/07-09-2021 8-18 PM Data.csv',  # ElectroCap p#6
-]
-headset = 'ElectroCap'
+for mvt in mvts:
+    # process p300
+    P300_rows = df.loc[(df['MVT'] == mvt) & (df['Experiment'] == "P300")]
+    p300_data_path_list = [os.path.join(data_root, x) for x in P300_rows['FileName'].values]
+    post_process_p300(p300_data_path_list, 'Galea', 'x', notes, is_plotting, is_exporting_samples, p300_tmin, p300_tmax, resample_f)
 
-post_process_p300(data_path_list, headset, participant, notes, is_plotting, is_exporting_samples, p300_tmin, p300_tmax, resample_f)
+    SSVEP_rows = df.loc[(df['MVT'] == mvt) & (df['Experiment'] == "SSVEP")]
+    SSVEP_data_path_list = [os.path.join(data_root, x) for x in SSVEP_rows['FileName'].values]
+    post_process_ssvep(SSVEP_data_path_list, 'Galea', 'x', notes, ssvep_tmin, ssvep_tmax)
