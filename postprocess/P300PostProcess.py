@@ -58,7 +58,7 @@ def post_process_p300(data_path_list, headset, participants=(0,), notes='', is_p
         raw = mne.concatenate_raws(raw_list)
         montage = make_standard_montage('standard_1005')
         raw.set_montage(montage)
-        raw = raw.filter(l_freq=0.5, h_freq=50, method='iir')
+        raw = raw.filter(l_freq=2, h_freq=50, method='iir')
         # identical segment #######
         events = find_events(raw)
         x = np.empty((0, len(desired_chs), int((tmax - tmin) * resample_f)))
