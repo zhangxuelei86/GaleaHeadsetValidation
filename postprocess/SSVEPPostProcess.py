@@ -103,3 +103,6 @@ def post_process_ssvep(data_path_list, headset, participants=(0,), notes='', tmi
                      title='{0} - {1} stim'.format(chan_name, key))
             plt.tight_layout()
             plt.show()
+
+    # calculate signal to noise ratio
+    # create template signals
