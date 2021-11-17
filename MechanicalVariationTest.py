@@ -9,8 +9,8 @@ from postprocess.RestStatePostProcess import post_process_rest_state
 from postprocess.SSVEPPostProcess import post_process_ssvep
 
 notes = 'Partial Test 11/9/20'
-path_to_notes = 'C:/Users/S-Vec/Dropbox/OpenBCI/Galea MVT Data/notes.csv'
-data_root = 'C:/Users/S-Vec/Dropbox/OpenBCI/Galea MVT Data'
+path_to_notes = 'C:/Dropbox/OpenBCI/Galea MVT Data/notes.csv'
+data_root = 'C:/Dropbox/OpenBCI/Galea MVT Data'
 
 is_plotting = True
 is_exporting_samples = False

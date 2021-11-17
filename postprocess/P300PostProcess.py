@@ -8,9 +8,21 @@ import numpy as np
 import pandas as pd
 from mne import Epochs, find_events
 from mne.channels import make_standard_montage
+import numpy as np
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
 
+from sktime.classification.compose import ColumnEnsembleClassifier
+from sktime.classification.dictionary_based import BOSSEnsemble
+from sktime.classification.distance_based import KNeighborsTimeSeriesClassifier
+from sktime.classification.interval_based import TimeSeriesForestClassifier
+from sktime.classification.shapelet_based import MrSEQLClassifier
+from sktime.datasets import load_basic_motions
+from sktime.transformations.panel.compose import ColumnConcatenator
 
-def post_process_p300(data_path_list, headset, participants=(0,), notes='', is_plotting=True, is_exporting_samples=False, tmin=-0.2, tmax=0.5, resample_f=50):
+def post_process_p300(data_path_list, headset, participants=(0,), notes='', is_plotting=True,
+                      is_exporting_samples=False, tmin=-0.2, tmax=0.5, resample_f=50):
     event_id = {'Target': 2, 'Distractor': 1}
     color_dict = {'Target': 'red', 'Distractor': 'blue'}
     if headset == 'Galea':
@@ -64,7 +76,8 @@ def post_process_p300(data_path_list, headset, participants=(0,), notes='', is_p
         x = np.empty((0, len(desired_chs), int((tmax - tmin) * resample_f)))
         y = np.empty((0))
         for event_name, event_marker_id in event_id.items():
-            epochs = Epochs(raw, events=events, event_id=event_id, tmin=tmin, tmax=tmax, preload=True, verbose=False, picks=desired_chs)
+            epochs = Epochs(raw, events=events, event_id=event_id, tmin=tmin, tmax=tmax, preload=True, verbose=False,
+                            picks=desired_chs)
             new_x = epochs[event_name].resample(50).get_data()
             x = np.concatenate([x, new_x])
             y = np.concatenate([y, np.array([event_name] * len(new_x))])
@@ -73,7 +86,6 @@ def post_process_p300(data_path_list, headset, participants=(0,), notes='', is_p
         os.mkdir(notes)
         np.save(os.path.join(notes, 'data'), x)
         np.save(os.path.join(notes, 'labels'), y)
-
 
     if is_plotting:
         # identical segment #######
@@ -88,6 +100,22 @@ def post_process_p300(data_path_list, headset, participants=(0,), notes='', is_p
         events = find_events(raw)
         # print('sample drop %: ', (1 - len(epochs.events) / len(events)) * 100)
 
+        # calculate the classification metrics
+        epochs = Epochs(raw, events=events, event_id=event_id, tmin=tmin, tmax=tmax,
+                          baseline=(-0.1, 0.0),
+                          preload=True,
+                          verbose=False, picks=desired_chs)  # shape is number of (samples, channels, times)
+        x_target = epochs['Target'].get_data()
+        x_distractor = epochs['Distractor'].get_data()
+        x = np.concatenate([x_target, x_distractor], axis=0)
+        x = np.reshape(x, newshape=(len(x), -1))  # squash the dimension
+        y = np.array([0] * len(x_target) + [1] * len(x_distractor))
+        X_train, X_test, y_train, y_test = train_test_split(x, y, random_state=42)
+        print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
+        knn = KNeighborsTimeSeriesClassifier(n_neighbors=1, distance="dtw")
+        knn.fit(X_train, y_train)
+        knn.score(X_test, y_test)
+
         for d_ch in desired_chs:
             matplotlib.pyplot.figure(figsize=(8.6, 7.2))
             for event_name, event_marker_id in event_id.items():
@@ -97,10 +125,12 @@ def post_process_p300(data_path_list, headset, participants=(0,), notes='', is_p
                                 preload=True,
                                 verbose=False, picks=d_ch, )
                 # epochs.filter(l_freq=0.5, h_freq=50, method='iir')
-                y = -epochs.pick(d_ch)[event_name].resample(50).get_data().reshape((-1, len(time_vector)))  # flip the axis
-                y1 = np.mean(y, axis=0) + 0.075 * np.std(y, axis=0)
-                y2 = np.mean(y, axis=0) - 0.075 * np.std(y, axis=0)
-                plt.fill_between(time_vector, y1, y2, where=y2 <= y1, facecolor=color_dict[event_name], interpolate=True,
+                y = -epochs.pick(d_ch)[event_name].resample(50).get_data().reshape(
+                    (-1, len(time_vector)))  # flip the axis
+                y1 = np.mean(y, axis=0) + 0.075 * np.std(y, axis=0)  # this is the upper envelope
+                y2 = np.mean(y, axis=0) - 0.075 * np.std(y, axis=0)  # this is the lower envelope
+                plt.fill_between(time_vector, y1, y2, where=y2 <= y1, facecolor=color_dict[event_name],
+                                 interpolate=True,
                                  alpha=0.5)
                 plt.plot(time_vector, np.mean(y, axis=0), c=color_dict[event_name], label=event_name)
 
@@ -116,5 +146,7 @@ def post_process_p300(data_path_list, headset, participants=(0,), notes='', is_p
                             preload=True,
                             verbose=False).average()
             times = np.arange(0.00, 0.41, 0.05)
-            evoked.plot_topomap(times, ch_type='eeg', time_unit='s', title=event_name + ' Ch {0}, {1}, #trial={2}, #sbj={3}'.format(d_ch, notes, events.shape[0], participants))
-
+            evoked.plot_topomap(times, ch_type='eeg', time_unit='s',
+                                title=event_name + ' Ch {0}, {1}, #trial={2}, #sbj={3}'.format(d_ch, notes,
+                                                                                               events.shape[0],
+                                                                                               participants))
