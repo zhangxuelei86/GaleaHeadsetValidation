@@ -12,7 +12,6 @@ import numpy as np
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-
 from sktime.classification.compose import ColumnEnsembleClassifier
 from sktime.classification.dictionary_based import BOSSEnsemble
 from sktime.classification.distance_based import KNeighborsTimeSeriesClassifier
@@ -102,9 +101,9 @@ def post_process_p300(data_path_list, headset, participants=(0,), notes='', is_p
 
         # calculate the classification metrics
         epochs = Epochs(raw, events=events, event_id=event_id, tmin=tmin, tmax=tmax,
-                          baseline=(-0.1, 0.0),
-                          preload=True,
-                          verbose=False, picks=desired_chs)  # shape is number of (samples, channels, times)
+                        baseline=(-0.1, 0.0),
+                        preload=True,
+                        verbose=False, picks=desired_chs)  # shape is number of (samples, channels, times)
         x_target = epochs['Target'].get_data()
         x_distractor = epochs['Distractor'].get_data()
         x = np.concatenate([x_target, x_distractor], axis=0)

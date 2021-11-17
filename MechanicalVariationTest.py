@@ -1,4 +1,7 @@
 # options
+import math
+
+import numpy as np
 import pandas as pd
 import os
 
@@ -9,8 +12,8 @@ from postprocess.RestStatePostProcess import post_process_rest_state
 from postprocess.SSVEPPostProcess import post_process_ssvep
 
 notes = 'Partial Test 11/9/20'
-path_to_notes = 'C:/Dropbox/OpenBCI/Galea MVT Data/notes.csv'
-data_root = 'C:/Dropbox/OpenBCI/Galea MVT Data'
+path_to_notes = '/Users/Leo/Dropbox/OpenBCI/Galea MVT Data/notes.csv'
+data_root = '/Users/Leo/Dropbox/OpenBCI/Galea MVT Data'
 
 is_plotting = True
 is_exporting_samples = False
@@ -35,23 +38,24 @@ resample_f = 50
 df = pd.read_csv(path_to_notes)
 # custom code after this
 participants = pd.unique(df['Participant'])  # find the MVT
-mvts = pd.unique(df['MVT'])  # find the MVT
+units = [x for x in pd.unique(df['Unit']) if type(x) == str]  # find the units
 
-for mvt in mvts:
-    # process p300
-    P300_rows = df.loc[(df['MVT'] == mvt) & (df['Experiment'] == "P300")]
-    p300_data_path_list = [os.path.join(data_root, x) for x in P300_rows['FileName'].values]
-    post_process_p300(p300_data_path_list, 'Galea', 'x', notes, is_plotting, is_exporting_samples, p300_tmin, p300_tmax, resample_f)
-
-    # process SSVEP
-    SSVEP_rows = df.loc[(df['MVT'] == mvt) & (df['Experiment'] == "SSVEP")]
-    SSVEP_data_path_list = [os.path.join(data_root, x) for x in SSVEP_rows['FileName'].values]
-    post_process_ssvep(SSVEP_data_path_list, 'Galea', 'x', notes, ssvep_tmin, ssvep_tmax)
-
-    # process RestState
-    RestState_rows = df.loc[(df['Participant'] == '1') & (df['Experiment'] == "RestState")]
-    RestState_data_path_list = [os.path.join(data_root, x) for x in RestState_rows['FileName'].values]
-    post_process_rest_state({'Galea': RestState_data_path_list}, timelocking_dict, 'x', notes)
+for unit in units:
+    if unit != np.nan:
+        # process p300
+        P300_rows = df.loc[(df['Unit'] == unit) & (df['Experiment'] == "P300")]
+        p300_data_path_list = [os.path.join(data_root, x) for x in P300_rows['FileName'].values]
+        p300_score = post_process_p300(p300_data_path_list, 'Galea', 'x', notes, is_plotting, is_exporting_samples, p300_tmin, p300_tmax, resample_f)
+        print('Unit {0}: P300 score is {1} '.format(unit, p300_score))
+        # process SSVEP
+        # SSVEP_rows = df.loc[(df['Unit'] == unit) & (df['Experiment'] == "SSVEP")]
+        # SSVEP_data_path_list = [os.path.join(data_root, x) for x in SSVEP_rows['FileName'].values]
+        # post_process_ssvep(SSVEP_data_path_list, 'Galea', 'x', notes, ssvep_tmin, ssvep_tmax)
+        #
+        # # process RestState
+        # RestState_rows = df.loc[(df['Unit'] == unit) & (df['Experiment'] == "RestState")]
+        # RestState_data_path_list = [os.path.join(data_root, x) for x in RestState_rows['FileName'].values]
+        # post_process_rest_state({'Galea': RestState_data_path_list}, timelocking_dict, 'x', notes)
 
 # SSVEP_rows = df.loc[(df['Experiment'] == "SSVEP")]
 # SSVEP_data_path_list = [os.path.join(data_root, x) for x in SSVEP_rows['FileName'].values]
